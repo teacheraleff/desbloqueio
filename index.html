@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desbloqueio | SLAP</title>
+    <title>Painel Criativo | SLAP</title>
     <link rel="icon" type="image/png" href="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749543469/SLAP_FAVICON_AMARELO_coilvj.png">
     
     <!-- Tailwind CSS -->
@@ -17,6 +17,7 @@
     <style>
         body {
             font-family: 'DM Sans', sans-serif;
+            background-color: #f8fafc; /* bg-slate-50 */
         }
         #idea-box {
             transition: all 0.3s ease-in-out;
@@ -48,52 +49,103 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-50">
 
-    <!-- Container Principal do Gerador -->
-    <div class="w-full max-w-3xl mx-auto">
-    
-        <!-- Logo SLAP -->
-        <div class="text-center mb-6">
-            <img src="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749349751/DBB440C2-684E-4DCF-9CD3-B2DDC18F1E53_3_vgocga.jpg" onerror="this.onerror=null;this.src='https://placehold.co/96x96/e0e0e0/ffffff?text=LOGO'" alt="SLAP Logo" class="w-24 h-auto mx-auto rounded-lg shadow-lg">
-        </div>
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <!-- Coluna Esquerda (Painel de Apoio) -->
+        <aside class="w-full lg:w-1/3 lg:max-w-sm bg-white/80 backdrop-blur-sm border-r border-gray-200 p-8">
+            <div class="sticky top-8">
+                <!-- Cabeçalho da Coluna Esquerda -->
+                <div class="flex items-center gap-4 mb-10">
+                    <img src="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749349751/DBB440C2-684E-4DCF-9CD3-B2DDC18F1E53_3_vgocga.jpg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/e0e0e0/ffffff?text=LOGO'" alt="SLAP Logo" class="w-12 h-12 rounded-lg shadow-md">
+                    <div>
+                        <h2 class="font-bold text-xl text-stone-800">Painel Criativo</h2>
+                        <p class="text-sm text-stone-500">Ferramentas para teachers</p>
+                    </div>
+                </div>
 
-        <!-- Card do Gerador -->
-        <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 sm:p-10 text-center">
-            
-            <!-- Cabeçalho -->
-            <h1 class="text-3xl sm:text-4xl font-black text-stone-800 gradient-text">Desbloqueio Criativo</h1>
-            <p class="text-stone-500 mt-3 mb-8 max-w-md mx-auto">Filtre por categoria ou clique no botão para gerar uma nova ideia de conteúdo instantaneamente!</p>
+                <!-- Bloco "Voltar para o Hub" -->
+                <div class="mb-8">
+                    <a href="https://slaphub.com.br" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-3 p-4 rounded-xl bg-gray-100 hover:bg-yellow-100 border border-gray-200 hover:border-yellow-300 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 group-hover:text-yellow-600 transition-colors"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                        <span class="font-semibold text-gray-700 group-hover:text-yellow-800 transition-colors">Voltar para o Hub</span>
+                    </a>
+                </div>
 
-            <!-- Seção de Filtros por Categoria -->
-            <div id="filters-section" class="mb-8 border-t border-b border-gray-200 py-6">
-                <div id="filters-container" class="flex flex-wrap justify-center gap-2 sm:gap-3">
-                    <!-- Os botões de filtro serão inseridos aqui pelo JS -->
+                <!-- Bloco de Mensagens sobre Criatividade -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-stone-700 mb-3">Pílula de Criatividade</h3>
+                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg">
+                        <p id="creativity-quote" class="text-sm italic text-indigo-800">"A criatividade é a inteligência se divertindo."</p>
+                        <p id="quote-author" class="text-right text-xs font-semibold text-indigo-500 mt-2">- Albert Einstein</p>
+                    </div>
+                </div>
+                
+                <!-- NOVO: Bloco Última Ideia Gerada -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-stone-700 mb-3">Última Ideia Gerada</h3>
+                    <div class="bg-gray-100 p-4 rounded-lg border border-dashed border-gray-300 min-h-[60px]">
+                        <p id="last-idea-text" class="text-sm text-gray-500">A sua ideia anterior aparecerá aqui...</p>
+                    </div>
+                </div>
+
+                <!-- NOVO: Bloco Conecte-se -->
+                <div class="mb-8">
+                     <h3 class="font-bold text-stone-700 mb-3">Conecte-se com o SLAP</h3>
+                     <div class="flex items-center gap-4">
+                        <a href="#" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 py-2 bg-rose-500/10 text-rose-700 rounded-lg hover:bg-rose-500/20 transition-all">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                             <span class="font-semibold text-sm">Instagram</span>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 py-2 bg-red-500/10 text-red-700 rounded-lg hover:bg-red-500/20 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 11.75a29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                            <span class="font-semibold text-sm">YouTube</span>
+                        </a>
+                     </div>
+                </div>
+
+                <!-- Rodapé da Coluna Esquerda -->
+                <footer class="mt-12 text-center">
+                     <p class="text-xs text-stone-400">Uma ferramenta do Hub Pedagógico SLAP</p>
+                </footer>
+            </div>
+        </aside>
+
+        <!-- Coluna Direita (Ferramenta Principal) -->
+        <main class="w-full lg:w-2/3 p-4 sm:p-8 md:p-12 flex items-center justify-center">
+            <div class="w-full max-w-3xl">
+                <!-- Card do Gerador -->
+                <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 sm:p-10 text-center">
+                    
+                    <!-- Cabeçalho -->
+                    <h1 class="text-3xl sm:text-4xl font-black text-stone-800 gradient-text">Desbloqueio Criativo</h1>
+                    <p class="text-stone-500 mt-3 mb-8 max-w-md mx-auto">Filtre por categoria ou clique no botão para gerar uma nova ideia de conteúdo instantaneamente!</p>
+
+                    <!-- Seção de Filtros por Categoria -->
+                    <div id="filters-section" class="mb-8 border-t border-b border-gray-200 py-6">
+                        <div id="filters-container" class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                            <!-- Os botões de filtro serão inseridos aqui pelo JS -->
+                        </div>
+                    </div>
+
+                    <!-- Caixa da Ideia Gerada -->
+                    <div id="idea-box" class="relative bg-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 min-h-[160px] flex items-center justify-center mb-8">
+                        <p id="idea-text" class="text-lg sm:text-xl font-medium text-stone-700">A sua próxima grande ideia aparecerá aqui...</p>
+                        <button id="copy-button" title="Copiar ideia" class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-full transition-all opacity-0 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                        <span id="copy-feedback" class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full opacity-0 transition-opacity">Copiado!</span>
+                    </div>
+
+                    <!-- Botão de Ação Principal -->
+                    <div class="flex items-center justify-center">
+                        <button id="generate-button" class="w-full sm:w-auto bg-[#F1D24B] hover:bg-yellow-400 text-stone-800 font-bold text-lg py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                            Gerar Nova Ideia
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Caixa da Ideia Gerada -->
-            <div id="idea-box" class="relative bg-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 min-h-[160px] flex items-center justify-center mb-8">
-                <p id="idea-text" class="text-lg sm:text-xl font-medium text-stone-700">A sua próxima grande ideia aparecerá aqui...</p>
-                <button id="copy-button" title="Copiar ideia" class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-full transition-all opacity-0 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
-                <span id="copy-feedback" class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full opacity-0 transition-opacity">Copiado!</span>
-            </div>
-
-            <!-- Botão de Ação Principal -->
-            <div class="flex items-center justify-center">
-                <button id="generate-button" class="w-full sm:w-auto bg-[#F1D24B] hover:bg-yellow-400 text-stone-800 font-bold text-lg py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-                    Gerar Nova Ideia
-                </button>
-            </div>
-
-        </div>
-        
-        <!-- Rodapé simples -->
-        <footer class="text-center mt-8">
-            <p class="text-sm text-stone-500">Uma ferramenta do Hub Pedagógico SLAP</p>
-        </footer>
+        </main>
     </div>
     
     <!-- Efeito sonoro de clique -->
@@ -101,7 +153,28 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Seletores de Elementos
+            // --- INÍCIO: LÓGICA DO PAINEL ESQUERDO ---
+            const quotes = [
+                { quote: "A criatividade é a inteligência se divertindo.", author: "Albert Einstein" },
+                { quote: "A criatividade exige a coragem de largar as certezas.", author: "Erich Fromm" },
+                { quote: "A melhor maneira de ter uma boa ideia é ter muitas ideias.", author: "Linus Pauling" },
+                { quote: "A criatividade é contagiosa. Passe-a adiante.", author: "Albert Einstein" },
+                { quote: "Não se pode esgotar a criatividade. Quanto mais você usa, mais você tem.", author: "Maya Angelou" },
+                { quote: "A lógica pode levar de A a B. A imaginação pode levar a qualquer lugar.", author: "Albert Einstein" },
+                { quote: "Toda criança é um artista. O problema é como permanecer um artista depois de crescer.", author: "Pablo Picasso" }
+            ];
+
+            const creativityQuoteEl = document.getElementById('creativity-quote');
+            const quoteAuthorEl = document.getElementById('quote-author');
+            const lastIdeaTextEl = document.getElementById('last-idea-text'); // NOVO
+            
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            creativityQuoteEl.textContent = `"${randomQuote.quote}"`;
+            quoteAuthorEl.textContent = `- ${randomQuote.author}`;
+            // --- FIM: LÓGICA DO PAINEL ESQUERDO ---
+
+
+            // --- INÍCIO: LÓGICA DO GERADOR (PAINEL DIREITO) ---
             const generateButton = document.getElementById('generate-button');
             const ideaBox = document.getElementById('idea-box');
             const ideaText = document.getElementById('idea-text');
@@ -110,9 +183,8 @@
             const clickSound = document.getElementById('click-sound');
             const filtersContainer = document.getElementById('filters-container');
             
-            // --- BANCO DE IDEIAS (EXPANDIDO) ---
             const ideaBank = [
-                // Gramática
+                 // Gramática
                 { category: 'Gramática', text: "Crie um Reels explicando a diferença entre 'will' e 'going to' com uma cena de filme." },
                 { category: 'Gramática', text: "Faça um Carrossel mostrando 3 usos surpreendentes do Present Perfect." },
                 { category: 'Gramática', text: "Grave um vídeo curto sobre um erro comum com preposições (ex: in/on/at)." },
@@ -413,8 +485,9 @@
             // Variáveis de estado
             let lastIdeaIndex = -1;
             let activeCategory = 'Todas';
+            let lastIdeaGenerated = ''; // NOVO
 
-            // --- INICIALIZAÇÃO ---
+            // --- INICIALIZAÇÃO do GERADOR ---
             const categories = ['Todas', ...new Set(ideaBank.map(item => item.category))];
             categories.forEach(category => {
                 const btn = document.createElement('button');
@@ -427,7 +500,7 @@
                 filtersContainer.appendChild(btn);
             });
 
-            // --- FUNÇÕES ---
+            // --- FUNÇÕES do GERADOR ---
             const playSoundAndAnimate = () => {
                 clickSound.currentTime = 0;
                 clickSound.play().catch(e => console.error("Não foi possível tocar o som.", e));
@@ -446,6 +519,15 @@
             };
 
             const generateNewIdea = () => {
+                // NOVO: Guarda a ideia atual antes de gerar uma nova
+                const currentIdea = ideaText.textContent;
+                if (!currentIdea.includes('aparecerá aqui...')) {
+                    lastIdeaGenerated = currentIdea;
+                    lastIdeaTextEl.textContent = lastIdeaGenerated;
+                    lastIdeaTextEl.classList.remove('text-gray-500');
+                    lastIdeaTextEl.classList.add('text-gray-700');
+                }
+
                 playSoundAndAnimate();
                 const filteredBank = activeCategory === 'Todas' ? ideaBank : ideaBank.filter(idea => idea.category === activeCategory);
                 if (filteredBank.length === 0) {
@@ -488,7 +570,7 @@
                 generateNewIdea();
             };
             
-            // --- EVENT LISTENERS ---
+            // --- EVENT LISTENERS do GERADOR ---
             generateButton.addEventListener('click', generateNewIdea);
             copyButton.addEventListener('click', copyToClipboard);
             filtersContainer.addEventListener('click', handleFilterClick);
