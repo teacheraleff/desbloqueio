@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desbloqueio Criativo com IA - SLAP</title>
+    <title>Desbloqueio | SLAP</title>
     <link rel="icon" type="image/png" href="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749543469/SLAP_FAVICON_AMARELO_coilvj.png">
     
     <!-- Tailwind CSS -->
@@ -18,7 +18,7 @@
         body {
             font-family: 'DM Sans', sans-serif;
         }
-        #idea-box, #ai-result-box {
+        #idea-box {
             transition: all 0.3s ease-in-out;
         }
         .pulsate {
@@ -36,22 +36,6 @@
             font-weight: 700;
             border-color: #F1D24B;
             transform: scale(1.05);
-        }
-        /* Animação para o spinner de carregamento da IA */
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        /* Melhora a legibilidade do texto gerado pela IA */
-        #ai-result-text {
-            white-space: pre-wrap; /* Preserva quebras de linha e espaços */
         }
         
         /* Estilo para o título com gradiente */
@@ -79,7 +63,7 @@
             
             <!-- Cabeçalho -->
             <h1 class="text-3xl sm:text-4xl font-black text-stone-800 gradient-text">Desbloqueio Criativo</h1>
-            <p class="text-stone-500 mt-3 mb-8 max-w-md mx-auto">Receba uma ideia de conteúdo e peça ajuda à nossa IA consultora para professores!</p>
+            <p class="text-stone-500 mt-3 mb-8 max-w-md mx-auto">Filtre por categoria ou clique no botão para gerar uma nova ideia de conteúdo instantaneamente!</p>
 
             <!-- Seção de Filtros por Categoria -->
             <div id="filters-section" class="mb-8 border-t border-b border-gray-200 py-6">
@@ -89,31 +73,12 @@
             </div>
 
             <!-- Caixa da Ideia Gerada -->
-            <div id="idea-box" class="relative bg-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 min-h-[160px] flex items-center justify-center mb-6">
+            <div id="idea-box" class="relative bg-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 min-h-[160px] flex items-center justify-center mb-8">
                 <p id="idea-text" class="text-lg sm:text-xl font-medium text-stone-700">A sua próxima grande ideia aparecerá aqui...</p>
                 <button id="copy-button" title="Copiar ideia" class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-full transition-all opacity-0 pointer-events-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
                 <span id="copy-feedback" class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full opacity-0 transition-opacity">Copiado!</span>
-            </div>
-
-             <!-- Seção de Aprimoramento com IA (inicialmente oculta) -->
-            <div id="ai-section" class="hidden text-center mb-8">
-                <button id="enhance-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
-                    Pedir ajuda à IA do SLAP ✨
-                </button>
-                <div class="mt-6 p-0.5 bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 rounded-xl hidden" id="ai-result-wrapper">
-                    <div id="ai-result-box" class="bg-white rounded-[11px] p-6 text-left">
-                        <div id="ai-loading-spinner" class="hidden flex items-center justify-center">
-                            <svg class="spinner h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span class="ml-4 text-indigo-700 font-medium">A IA do SLAP está a pensar...</span>
-                        </div>
-                        <p id="ai-result-text" class="text-stone-700"></p>
-                    </div>
-                </div>
             </div>
 
             <!-- Botão de Ação Principal -->
@@ -144,13 +109,7 @@
             const copyFeedback = document.getElementById('copy-feedback');
             const clickSound = document.getElementById('click-sound');
             const filtersContainer = document.getElementById('filters-container');
-            const aiSection = document.getElementById('ai-section');
-            const enhanceButton = document.getElementById('enhance-button');
-            const aiResultWrapper = document.getElementById('ai-result-wrapper');
-            const aiResultBox = document.getElementById('ai-result-box');
-            const aiLoadingSpinner = document.getElementById('ai-loading-spinner');
-            const aiResultText = document.getElementById('ai-result-text');
-
+            
             // --- BANCO DE IDEIAS (EXPANDIDO) ---
             const ideaBank = [
                 // Gramática
@@ -483,9 +442,6 @@
                     ideaText.style.opacity = '1';
                     copyButton.style.opacity = '1';
                     copyButton.style.pointerEvents = 'auto';
-                    aiSection.classList.remove('hidden');
-                    aiResultWrapper.classList.add('hidden'); // Esconde o wrapper
-                    aiResultText.innerHTML = ''; // Limpa o conteúdo HTML
                 }, 150);
             };
 
@@ -506,8 +462,7 @@
             };
 
             const copyToClipboard = () => {
-                // Copia o texto (sem formatação HTML) para a área de transferência
-                const textToCopy = aiResultText.innerText || ideaText.textContent;
+                const textToCopy = ideaText.textContent;
                 const tempTextArea = document.createElement('textarea');
                 tempTextArea.value = textToCopy;
                 document.body.appendChild(tempTextArea);
@@ -533,88 +488,10 @@
                 generateNewIdea();
             };
             
-            // --- NOVA FUNÇÃO PARA CONVERTER MARKDOWN BÁSICO EM HTML ---
-            const markdownToHtml = (text) => {
-                return text
-                    // Converte **negrito** para <strong>negrito</strong>
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    // Converte *itálico* para <em>itálico</em>
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    // Converte quebras de linha em <br>
-                    .replace(/\n/g, '<br>');
-            };
-
-            // --- FUNÇÃO DE IA ESPECIALIZADA ATUALIZADA ---
-            const enhanceWithAI = async () => {
-                const currentIdea = ideaText.textContent;
-                if (!currentIdea || currentIdea.startsWith('A sua próxima')) return;
-                
-                aiResultWrapper.classList.remove('hidden');
-                aiResultBox.classList.remove('hidden');
-                aiLoadingSpinner.classList.remove('hidden');
-                aiResultText.classList.add('hidden');
-                enhanceButton.disabled = true;
-                enhanceButton.classList.add('opacity-50', 'cursor-not-allowed');
-
-                // MUDANÇA: Instrução de saudação adicionada ao prompt.
-                const prompt = `
-                Você é a "IA do SLAP", uma especialista em ajudar professores de inglês a transformar ideias em conteúdo de vídeo para redes sociais que seja educativo e engajante. Sua resposta deve ser sempre direcionada a um professor, usando uma linguagem que o capacite e o inspire. Sempre comece sua resposta com o cumprimento "Olá, teacher!".
-
-                Para a ideia de conteúdo abaixo, crie um plano de ação detalhado. A sua resposta DEVE seguir esta estrutura:
-
-                **Formato Ideal:** [Sugira o melhor formato: Reels, Carrossel, Stories, etc., e justifique o porquê em uma frase]
-                **Título Magnético (Hook):** [Sugira 2 ou 3 opções de títulos curtos e que capturem a atenção]
-                **Roteiro Rápido (Estrutura):** [Divida em 3 a 4 passos simples. Ex: Cena 1: problema; Cena 2: solução; Cena 3: exemplo; CTA]
-                **Dica Pedagógica:** [Explique como essa postagem ajuda o aluno. Ex: "Isso solidifica o entendimento do Present Perfect em um contexto real, facilitando a memorização."]
-                **Call to Action (CTA):** [Sugira uma chamada para ação que gere engajamento. Ex: "Comente com uma frase usando a dica que você aprendeu!"]
-
-                ---
-                **Ideia Original do Professor:** "${currentIdea}"
-                ---
-
-                **Plano de Ação Detalhado:**
-                `;
-
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const payload = {
-                    contents: [{ role: "user", parts: [{ text: prompt }] }]
-                };
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`API Error: ${response.statusText}`);
-                    }
-                    
-                    const result = await response.json();
-                    const aiResponseText = result.candidates[0].content.parts[0].text;
-                    
-                    const htmlContent = markdownToHtml(aiResponseText);
-                    aiResultText.innerHTML = htmlContent;
-
-                } catch (error) {
-                    console.error("Erro ao chamar a API da IA:", error);
-                    aiResultText.innerText = "Desculpe, não foi possível contatar a IA no momento. Tente novamente mais tarde.";
-                } finally {
-                    aiLoadingSpinner.classList.add('hidden');
-                    aiResultText.classList.remove('hidden');
-                    enhanceButton.disabled = false;
-                    enhanceButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            };
-
-
             // --- EVENT LISTENERS ---
             generateButton.addEventListener('click', generateNewIdea);
             copyButton.addEventListener('click', copyToClipboard);
             filtersContainer.addEventListener('click', handleFilterClick);
-            enhanceButton.addEventListener('click', enhanceWithAI);
         });
     </script>
 </body>
