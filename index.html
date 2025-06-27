@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desbloqueio Criativo com IA - SLAP</title>
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749543469/SLAP_FAVICON_AMARELO_coilvj.png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+        }
+        #idea-box, #ai-result-box {
+            transition: all 0.3s ease-in-out;
+        }
+        .pulsate {
+            animation: pulsate-animation 0.5s ease-in-out;
+        }
+        @keyframes pulsate-animation {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
+        }
+        /* Botão de filtro ativo com transição suave */
+        .filter-btn.active {
+            background-color: #F1D24B;
+            color: #3f3f46; /* stone-700 */
+            font-weight: 700;
+            border-color: #F1D24B;
+            transform: scale(1.05);
+        }
+        /* Animação para o spinner de carregamento da IA */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Melhora a legibilidade do texto gerado pela IA */
+        #ai-result-text {
+            white-space: pre-wrap; /* Preserva quebras de linha e espaços */
+        }
+        
+        /* Estilo para o título com gradiente */
+        .gradient-text {
+            background: linear-gradient(to right, #333, #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Container Principal do Gerador -->
+    <div class="w-full max-w-3xl mx-auto">
+    
+        <!-- Logo SLAP -->
+        <div class="text-center mb-6">
+            <img src="https://res.cloudinary.com/dqfi22uz0/image/upload/v1749349751/DBB440C2-684E-4DCF-9CD3-B2DDC18F1E53_3_vgocga.jpg" onerror="this.onerror=null;this.src='https://placehold.co/96x96/e0e0e0/ffffff?text=LOGO'" alt="SLAP Logo" class="w-24 h-auto mx-auto rounded-lg shadow-lg">
+        </div>
+
+        <!-- Card do Gerador -->
+        <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 sm:p-10 text-center">
+            
+            <!-- Cabeçalho -->
+            <h1 class="text-3xl sm:text-4xl font-black text-stone-800 gradient-text">Desbloqueio Criativo</h1>
+            <p class="text-stone-500 mt-3 mb-8 max-w-md mx-auto">Receba uma ideia de conteúdo e peça ajuda à nossa IA consultora para professores!</p>
+
+            <!-- Seção de Filtros por Categoria -->
+            <div id="filters-section" class="mb-8 border-t border-b border-gray-200 py-6">
+                <div id="filters-container" class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                    <!-- Os botões de filtro serão inseridos aqui pelo JS -->
+                </div>
+            </div>
+
+            <!-- Caixa da Ideia Gerada -->
+            <div id="idea-box" class="relative bg-gray-100 shadow-inner border border-gray-200 rounded-xl p-6 min-h-[160px] flex items-center justify-center mb-6">
+                <p id="idea-text" class="text-lg sm:text-xl font-medium text-stone-700">A sua próxima grande ideia aparecerá aqui...</p>
+                <button id="copy-button" title="Copiar ideia" class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-600 p-2 rounded-full transition-all opacity-0 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+                <span id="copy-feedback" class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full opacity-0 transition-opacity">Copiado!</span>
+            </div>
+
+             <!-- Seção de Aprimoramento com IA (inicialmente oculta) -->
+            <div id="ai-section" class="hidden text-center mb-8">
+                <button id="enhance-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                    Pedir ajuda à IA do SLAP ✨
+                </button>
+                <div class="mt-6 p-0.5 bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 rounded-xl hidden" id="ai-result-wrapper">
+                    <div id="ai-result-box" class="bg-white rounded-[11px] p-6 text-left">
+                        <div id="ai-loading-spinner" class="hidden flex items-center justify-center">
+                            <svg class="spinner h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="ml-4 text-indigo-700 font-medium">A IA do SLAP está a pensar...</span>
+                        </div>
+                        <p id="ai-result-text" class="text-stone-700"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão de Ação Principal -->
+            <div class="flex items-center justify-center">
+                <button id="generate-button" class="w-full sm:w-auto bg-[#F1D24B] hover:bg-yellow-400 text-stone-800 font-bold text-lg py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                    Gerar Nova Ideia
+                </button>
+            </div>
+
+        </div>
+        
+        <!-- Rodapé simples -->
+        <footer class="text-center mt-8">
+            <p class="text-sm text-stone-500">Uma ferramenta do Hub Pedagógico SLAP</p>
+        </footer>
+    </div>
+    
+    <!-- Efeito sonoro de clique -->
+    <audio id="click-sound" src="https://res.cloudinary.com/dqfi22uz0/video/upload/v1749379887/click_lremdg.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seletores de Elementos
+            const generateButton = document.getElementById('generate-button');
+            const ideaBox = document.getElementById('idea-box');
+            const ideaText = document.getElementById('idea-text');
+            const copyButton = document.getElementById('copy-button');
+            const copyFeedback = document.getElementById('copy-feedback');
+            const clickSound = document.getElementById('click-sound');
+            const filtersContainer = document.getElementById('filters-container');
+            const aiSection = document.getElementById('ai-section');
+            const enhanceButton = document.getElementById('enhance-button');
+            const aiResultWrapper = document.getElementById('ai-result-wrapper');
+            const aiResultBox = document.getElementById('ai-result-box');
+            const aiLoadingSpinner = document.getElementById('ai-loading-spinner');
+            const aiResultText = document.getElementById('ai-result-text');
+
+            // --- BANCO DE IDEIAS (EXPANDIDO) ---
+            const ideaBank = [
+                // Gramática
+                { category: 'Gramática', text: "Crie um Reels explicando a diferença entre 'will' e 'going to' com uma cena de filme." },
+                { category: 'Gramática', text: "Faça um Carrossel mostrando 3 usos surpreendentes do Present Perfect." },
+                { category: 'Gramática', text: "Grave um vídeo curto sobre um erro comum com preposições (ex: in/on/at)." },
+                { category: 'Gramática', text: "Explique a diferença entre 'say' e 'tell' de uma forma divertida." },
+                { category: 'Gramática', text: "Crie um Quiz nos Stories: 'much' vs 'many'." },
+                { category: 'Gramática', text: "Faça um vídeo rápido sobre a pronúncia correta do '-ed' em verbos regulares." },
+                { category: 'Gramática', text: "Mostre como usar 'used to' para falar de hábitos passados." },
+                { category: 'Gramática', text: "Crie uma dica visual para nunca mais confundir 'borrow' e 'lend'." },
+                { category: 'Gramática', text: "Diferença entre 'Simple Past' e 'Present Perfect' usando uma linha do tempo." },
+                { category: 'Gramática', text: "Como usar 'Reported Speech' para contar uma fofoca (de filme, claro)." },
+                { category: 'Gramática', text: "Explique os 'Modal Verbs' de possibilidade (may, might, could) com exemplos práticos." },
+                { category: 'Gramática', text: "Um vídeo sobre 'Conditionals' (Tipo 1 e 2) com situações hipotéticas engraçadas." },
+                { category: 'Gramática', text: "O que são 'Gerunds' e 'Infinitives'? Mostre exemplos claros." },
+                { category: 'Gramática', text: "Uso de 'articles' (a, an, the): um guia rápido para não errar mais." },
+                { category: 'Gramática', text: "Como usar 'comparatives' e 'superlatives' para descrever personagens de séries." },
+                { category: 'Gramática', text: "Explique 'Passive Voice' mostrando a diferença de foco na frase." },
+                { category: 'Gramática', text: "Faça um carrossel sobre 'Question Tags' (isn't it?, don't you?)." },
+                { category: 'Gramática', text: "Diferença entre 'who' e 'whom' de forma simples." },
+                { category: 'Gramática', text: "Como usar 'enough' e 'too' corretamente." },
+                { category: 'Gramática', text: "Explique os diferentes futuros em inglês (will, going to, present continuous)." },
+                { category: 'Gramática', text: "Vídeo sobre o uso de 'some' e 'any'." },
+                { category: 'Gramática', text: "O que são 'Relative Clauses'? (who, which, that, where)." },
+                { category: 'Gramática', text: "Como e quando usar o 'Past Perfect'." },
+                { category: 'Gramática', text: "Uso de 'since' e 'for' com o Present Perfect." },
+                { category: 'Gramática', text: "Explique o 'Subjunctive Mood' em inglês com exemplos." },
+                { category: 'Gramática', text: "Vídeo rápido sobre a ordem dos adjetivos em inglês." },
+                { category: 'Gramática', text: "Como usar 'either/or' e 'neither/nor'." },
+                { category: 'Gramática', text: "O que é e como usar o 'Causative' (have/get something done)." },
+                { category: 'Gramática', text: "Explique 'mixed conditionals' com exemplos práticos." },
+                { category: 'Gramática', text: "Diferença entre 'as' e 'like'." },
+                // Vocabulário
+                { category: 'Vocabulário', text: "Ensine 5 phrasal verbs essenciais para viagens internacionais." },
+                { category: 'Vocabulário', text: "Faça um vídeo com vocabulário de negócios para uma entrevista de emprego." },
+                { category: 'Vocabulário', text: "Mostre 3 gírias (slangs) que estão em alta no inglês atualmente." },
+                { category: 'Vocabulário', text: "Crie um conteúdo sobre falsos cognatos (false friends) que podem causar confusão." },
+                { category: 'Vocabulário', text: "Faça um post com vocabulário para descrever diferentes tipos de comida." },
+                { category: 'Vocabulário', text: "Ensine expressões idiomáticas relacionadas a cores (ex: 'feeling blue')." },
+                { category: 'Vocabulário', text: "Vocabulário para usar no aeroporto (check-in, boarding, etc.)." },
+                { category: 'Vocabulário', text: "5 sinônimos para 'very' (very good -> excellent, amazing, etc.)." },
+                { category: 'Vocabulário', text: "Como descrever a personalidade de alguém em inglês." },
+                { category: 'Vocabulário', text: "Vocabulário essencial para uma chamada de vídeo de trabalho." },
+                { category: 'Vocabulário', text: "Palavras e expressões para usar em um restaurante." },
+                { category: 'Vocabulário', text: "Ensine 'collocations' comuns (ex: make a mistake, do business)." },
+                { category: 'Vocabulário', text: "Vocabulário sobre redes sociais e internet." },
+                { category: 'Vocabulário', text: "Expressões para concordar e discordar educadamente." },
+                { category: 'Vocabulário', text: "Partes do corpo humano: um guia visual." },
+                { category: 'Vocabulário', text: "Vocabulário sobre o clima e o tempo." },
+                { category: 'Vocabulário', text: "Expressões idiomáticas com animais (ex: 'hold your horses')." },
+                { category: 'Vocabulário', text: "Vocabulário para falar sobre filmes e séries." },
+                { category: 'Vocabulário', text: "Diferentes formas de dizer 'I don't know'." },
+                { category: 'Vocabulário', text: "Vocabulário relacionado a dinheiro e finanças." },
+                { category: 'Vocabulário', text: "Phrasal verbs com 'get' (get up, get over, etc.)." },
+                { category: 'Vocabulário', text: "Palavras para descrever paisagens (mountains, rivers, etc.)." },
+                { category: 'Vocabulário', text: "Como falar sobre hobbies e interesses em inglês." },
+                { category: 'Vocabulário', text: "Vocabulário de emergência (médico, polícia)." },
+                { category: 'Vocabulário', text: "Expressões para dar sua opinião (In my opinion, I believe that...)." },
+                { category: 'Vocabulário', text: "Phrasal verbs com 'look' (look for, look after, etc.)." },
+                { category: 'Vocabulário', text: "Vocabulário sobre roupas e acessórios." },
+                { category: 'Vocabulário', text: "Palavras que vieram do inglês e usamos no português." },
+                { category: 'Vocabulário', text: "Diferentes maneiras de dizer 'goodbye'." },
+                { category: 'Vocabulário', text: "Vocabulário para compras online (add to cart, checkout, etc.)." },
+                // Pronúncia
+                { category: 'Pronúncia', text: "Faça um vídeo sobre a pronúncia do som 'th' (think vs. this)." },
+                { category: 'Pronúncia', text: "Crie um post com 5 palavras que têm letras silenciosas (ex: 'know', 'island')." },
+                { category: 'Pronúncia', text: "Demonstre a diferença de pronúncia entre 'ship' e 'sheep' (minimal pairs)." },
+                { category: 'Pronúncia', text: "Ensine a entonação correta para fazer perguntas em inglês." },
+                { category: 'Pronúncia', text: "Diferença de pronúncia: 'beach' vs 'b*tch'." },
+                { category: 'Pronúncia', text: "Como pronunciar os nomes de marcas famosas (Nike, Adidas, etc.)." },
+                { category: 'Pronúncia', text: "O som do 'schwa' em inglês: a vogal mais comum." },
+                { category: 'Pronúncia', text: "Diferença de pronúncia entre 'dessert' e 'desert'." },
+                { category: 'Pronúncia', text: "Trabalhando a pronúncia do 'r' americano." },
+                { category: 'Pronúncia', text: "Diferença entre 'can' e 'can't' na fala rápida." },
+                { category: 'Pronúncia', text: "Como pronunciar palavras terminadas em '-tion' e '-sion'." },
+                { category: 'Pronúncia', text: "Pronúncia de palavras com 'ou' (through, tough, though)." },
+                { category: 'Pronúncia', text: "Entonação: como soar mais natural e menos robótico." },
+                { category: 'Pronúncia', text: "Diferença de pronúncia de 'live' (verbo) e 'live' (adjetivo)." },
+                { category: 'Pronúncia', text: "Desafio de trava-línguas (tongue twisters) em inglês." },
+                { category: 'Pronúncia', text: "Como conectar palavras na fala (connected speech)." },
+                { category: 'Pronúncia', text: "Pronúncia de 'read' no presente e no passado." },
+                { category: 'Pronúncia', text: "Diferenças de pronúncia: inglês americano vs. britânico." },
+                { category: 'Pronúncia', text: "Palavras que os brasileiros mais erram a pronúncia." },
+                { category: 'Pronúncia', text: "A importância do 'stress' na sílaba correta." },
+                { category: 'Pronúncia', text: "Como pronunciar 'world', 'word' e 'were'." },
+                { category: 'Pronúncia', text: "A pronúncia dos números: 'thirteen' vs 'thirty'." },
+                { category: 'Pronúncia', text: "O som do 'h' aspirado no início das palavras." },
+                { category: 'Pronúncia', text: "Como pronunciar o nome de cidades famosas (London, Los Angeles)." },
+                { category: 'Pronúncia', text: "Diferença de pronúncia entre 'man' e 'men'." },
+                { category: 'Pronúncia', text: "Reduções comuns na fala: 'wanna', 'gonna', 'gotta'." },
+                { category: 'Pronúncia', text: "Como pronunciar palavras com 'gh' (laugh, high, ghost)." },
+                { category: 'Pronúncia', text: "Praticando a entonação de 'Wh- questions'." },
+                { category: 'Pronúncia', text: "Letras que não pronunciamos no meio das palavras (ex: 'Wednesday')." },
+                { category: 'Pronúncia', text: "O som final de 's' em plurais e verbos (s/z/iz)." },
+                // Interativo
+                { category: 'Interativo', text: "Abra uma caixinha de perguntas com o tema: 'Qual sua maior dúvida em inglês?'." },
+                { category: 'Interativo', text: "Faça uma enquete: 'Qual sotaque de inglês você acha mais legal? Americano ou Britânico?'." },
+                { category: 'Interativo', text: "Peça para os seguidores completarem uma frase nos comentários: 'If I had a million dollars, I would...'" },
+                { category: 'Interativo', text: "Quiz nos Stories: 'Verdadeiro ou Falso?' sobre fatos da cultura pop." },
+                { category: 'Interativo', text: "Use o sticker de teste: 'Qual o phrasal verb correto para esta situação?'" },
+                { category: 'Interativo', text: "Peça para traduzirem uma gíria brasileira para o inglês nos comentários." },
+                { category: 'Interativo', text: "Live de Q&A (Perguntas e Respostas) para tirar dúvidas ao vivo." },
+                { category: 'Interativo', text: "Desafio: peça para os seguidores gravarem um story respondendo uma pergunta em inglês e te marcarem." },
+                { category: 'Interativo', text: "Use a figurinha de enquete: 'Você prefere aprender inglês com música ou com filmes?'" },
+                { category: 'Interativo', text: "Peça para descreverem o emoji do dia com uma palavra em inglês." },
+                { category: 'Interativo', text: "Faça uma batalha de vocabulário nos stories (ex: sinônimos de 'happy')." },
+                { category: 'Interativo', text: "Caixinha de perguntas: 'Que música em inglês você quer que eu analise?'" },
+                { category: 'Interativo', text: "Peça para criarem uma frase com 3 palavras aleatórias que você postar." },
+                { category: 'Interativo', text: "Enquete: 'Qual o erro de gramática mais chato de aprender?'" },
+                { category: 'Interativo', text: "Faça um 'React' a vídeos de gringos tentando falar português." },
+                { category: 'Interativo', text: "Peça para os seguidores mandarem fotos e você as descreve em inglês." },
+                { category: 'Interativo', text: "Quiz: 'Adivinhe o filme pela citação em inglês'." },
+                { category: 'Interativo', text: "Use o sticker 'Sua vez': 'Mostre seu cantinho de estudos'." },
+                { category: 'Interativo', text: "Live de correção de pronúncia com seguidores." },
+                { category: 'Interativo', text: "Peça para comentarem o nome de uma série para maratonar e aprender inglês." },
+                { category: 'Interativo', text: "Caixinha de perguntas: 'Qual seu maior medo ao falar inglês?'" },
+                { category: 'Interativo', text: "Enquete: 'O que é mais difícil: listening ou speaking?'" },
+                { category: 'Interativo', text: "Desafio nos comentários: 'Escreva um haiku (poema 5-7-5 sílabas) em inglês'." },
+                { category: 'Interativo', text: "Use o sticker de contagem regressiva para uma aula especial ou live." },
+                { category: 'Interativo', text: "Peça para os seguidores definirem uma palavra difícil em inglês com suas próprias palavras." },
+                { category: 'Interativo', text: "Quiz: 'Este phrasal verb é separável ou inseparável?'" },
+                { category: 'Interativo', text: "Peça para darem uma legenda em inglês para uma foto engraçada." },
+                { category: 'Interativo', text: "Live de análise de currículo em inglês (com voluntários)." },
+                { category: 'Interativo', text: "Enquete: 'Qual a melhor forma de aprender vocabulário?'" },
+                { category: 'Interativo', text: "Caixinha de perguntas: 'Me mande uma palavra e eu te ensino a usar numa frase'." },
+                // Cultura
+                { category: 'Cultura', text: "Faça um vídeo sobre uma tradição cultural de um país de língua inglesa (ex: Thanksgiving)." },
+                { category: 'Cultura', text: "Compare uma diferença cultural engraçada entre o Brasil e os EUA/Reino Unido." },
+                { category: 'Cultura', text: "Liste 3 fatos curiosos sobre a língua inglesa que pouca gente sabe." },
+                { category: 'Cultura', text: "Explique o que é o 'Boxing Day' no Reino Unido." },
+                { category: 'Cultura', text: "Diferenças no sistema de ensino: Brasil vs. EUA." },
+                { category: 'Cultura', text: "Comidas típicas de café da manhã em países de língua inglesa." },
+                { category: 'Cultura', text: "O que é o 'St. Patrick's Day' e por que tudo fica verde?" },
+                { category: 'Cultura', text: "Gestos que são normais no Brasil mas ofensivos em outros países." },
+                { category: 'Cultura', text: "Explique a cultura da 'gorjeta' (tipping) nos EUA." },
+                { category: 'Cultura', text: "Feriados que só existem nos EUA (ex: 4th of July)." },
+                { category: 'Cultura', text: "Como funcionam as medidas americanas (pés, polegadas, milhas)." },
+                { category: 'Cultura', text: "A paixão dos britânicos por chá: mitos e verdades." },
+                { category: 'Cultura', text: "O que é 'Halloween' e suas origens." },
+                { category: 'Cultura', text: "Diferenças no humor: piadas britânicas vs. americanas." },
+                { category: 'Cultura', text: "Como é o sistema de saúde no Reino Unido (NHS)." },
+                { category: 'Cultura', text: "Esportes populares nos EUA que não são famosos no Brasil (Baseball, American Football)." },
+                { category: 'Cultura', text: "Curiosidades sobre a Austrália (animais, gírias)." },
+                { category: 'Cultura', text: "A família real britânica: quem é quem." },
+                { category: 'Cultura', text: "O que os gringos pensam sobre o Brasil? (baseado em pesquisas/vídeos)." },
+                { category: 'Cultura', text: "Como é um 'high school prom' americano." },
+                { category: 'Cultura', text: "Diferenças entre 'apartments' e 'flats'." },
+                { category: 'Cultura', text: "A cultura do 'small talk' em países de língua inglesa." },
+                { category: 'Cultura', text: "Curiosidades sobre o Canadá." },
+                { category: 'Cultura', text: "Explique o que é o 'Black Friday' e sua origem." },
+                { category: 'Cultura', text: "Diferenças de vocabulário: inglês americano vs. britânico (ex: cookie/biscuit)." },
+                { category: 'Cultura', text: "Como os gringos celebram o Ano Novo." },
+                { category: 'Cultura', text: "O que é 'college' nos EUA? É o mesmo que faculdade?" },
+                { category: 'Cultura', text: "Explique a cultura de 'yard sales' (vendas de garagem)." },
+                { category: 'Cultura', text: "Curiosidades sobre a Irlanda." },
+                { category: 'Cultura', text: "Comidas estranhas de países de língua inglesa." },
+                // Storytelling
+                { category: 'Storytelling', text: "Compartilhe uma história engraçada sobre um erro que você cometeu aprendendo inglês." },
+                { category: 'Storytelling', text: "Mostre um trecho dos bastidores de uma aula do SLAP (com permissão)." },
+                { category: 'Storytelling', text: "Conte a história de como você decidiu se tornar professor(a) de inglês." },
+                { category: 'Storytelling', text: "Descreva o 'perrengue' mais engraçado que você passou em uma viagem internacional." },
+                { category: 'Storytelling', text: "Compartilhe a história de um aluno que teve um grande avanço no inglês." },
+                { category: 'Storytelling', text: "Faça um vídeo 'Um dia na minha vida como teacher'." },
+                { category: 'Storytelling', text: "Conte sobre um filme ou livro que mudou sua forma de ver o aprendizado de inglês." },
+                { category: 'Storytelling', text: "Revele um 'mico' que você pagou por causa de um falso cognato." },
+                { category: 'Storytelling', text: "Compartilhe sua maior dificuldade quando estava aprendendo inglês e como superou." },
+                { category: 'Storytelling', text: "Conte a origem de uma expressão idiomática famosa." },
+                { category: 'Storytelling', text: "Mostre sua coleção de livros em inglês ou materiais de ensino." },
+                { category: 'Storytelling', text: "Grave um vídeo sobre 'a coisa mais estranha que já me perguntaram em inglês'." },
+                { category: 'Storytelling', text: "Conte uma história de sucesso de um ex-aluno que usou o inglês para conseguir um emprego." },
+                { category: 'Storytelling', text: "Faça um tour pelo seu escritório/local de trabalho." },
+                { category: 'Storytelling', text: "Compartilhe uma memória afetiva relacionada à língua inglesa." },
+                { category: 'Storytelling', text: "Reaja a um vídeo seu antigo falando inglês e comente sua evolução." },
+                { category: 'Storytelling', text: "Conte a história de uma palavra curiosa em inglês." },
+                { category: 'Storytelling', text: "Mostre o processo de como você planeja uma aula." },
+                { category: 'Storytelling', text: "Compartilhe uma gafe cultural que você cometeu ou presenciou." },
+                { category: 'Storytelling', text: "Conte sobre o melhor conselho sobre aprender inglês que você já recebeu." },
+                { category: 'Storytelling', text: "Faça um vídeo 'Expectativa vs. Realidade' sobre ser professor de inglês." },
+                { category: 'Storytelling', text: "Compartilhe uma conquista que te deixou orgulhoso(a) na sua carreira." },
+                { category: 'Storytelling', text: "Descreva a sua primeira experiência falando com um nativo." },
+                { category: 'Storytelling', text: "Conte sobre um hábito de estudo que realmente funciona para você." },
+                { category: 'Storytelling', text: "Faça um 'unboxing' de um livro ou material didático novo." },
+                { category: 'Storytelling', text: "Conte a história de como o inglês abriu portas na sua vida." },
+                { category: 'Storytelling', text: "Mostre um 'antes e depois' de um aluno (com permissão)." },
+                { category: 'Storytelling', text: "Desabafe sobre um desafio comum da profissão de teacher de forma bem-humorada." },
+                { category: 'Storytelling', text: "Compartilhe uma dica que um professor seu te deu e que você nunca esqueceu." },
+                { category: 'Storytelling', text: "Faça um vídeo sobre 'Coisas que meus alunos falam que me fazem rir'." },
+                // Erros Comuns
+                { category: 'Erros Comuns', text: "Faça um vídeo sobre o erro de usar 'I have' para dizer a idade." },
+                { category: 'Erros Comuns', text: "Explique a confusão comum entre 'fun' e 'funny'." },
+                { category: 'Erros Comuns', text: "Diferença entre 'lose' e 'miss'." },
+                { category: 'Erros Comuns', text: "Por que não se deve traduzir 'pretend' como 'pretender'." },
+                { category: 'Erros Comuns', text: "Confusão entre 'actually' e 'atualmente'." },
+                { category: 'Erros Comuns', text: "Uso incorreto de 'people' e 'peoples'." },
+                { category: 'Erros Comuns', text: "Explique por que 'I'm with hunger' está errado." },
+                { category: 'Erros Comuns', text: "Diferença entre 'advise' (verbo) e 'advice' (substantivo)." },
+                { category: 'Erros Comuns', text: "Não confunda 'history' e 'story'." },
+                { category: 'Erros Comuns', text: "O erro de dizer 'Thanks, God!'." },
+                { category: 'Erros Comuns', text: "Por que 'make a question' está errado (o correto é 'ask a question')." },
+                { category: 'Erros Comuns', text: "Confusão entre 'rob' e 'steal'." },
+                { category: 'Erros Comuns', text: "Diferença entre 'affect' e 'effect'." },
+                { category: 'Erros Comuns', text: "Por que 'I liked of the movie' está incorreto." },
+                { category: 'Erros Comuns', text: "Confusão entre 'sensible' e 'sensitive'." },
+                { category: 'Erros Comuns', text: "O uso de 'double negative' em inglês." },
+                { category: 'Erros Comuns', text: "Diferença entre 'specially' e 'especially'." },
+                { category: 'Erros Comuns', text: "Por que não se usa 'the' antes de nomes de países (com exceções)." },
+                { category: 'Erros Comuns', text: "Erro comum: 'He do' em vez de 'He does'." },
+                { category: 'Erros Comuns', text: "Confusão entre 'trip', 'travel' e 'journey'." },
+                { category: 'Erros Comuns', text: "Por que 'discuss about' é redundante." },
+                { category: 'Erros Comuns', text: "Diferença entre 'historic' e 'historical'." },
+                { category: 'Erros Comuns', text: "O erro de usar 'to' depois de 'modal verbs' (ex: I can to swim)." },
+                { category: 'Erros Comuns', text: "Confusão entre 'lie' e 'lay'." },
+                { category: 'Erros Comuns', text: "Por que você não 'assists a movie', você 'watches a movie'." },
+                { category: 'Erros Comuns', text: "Diferença entre 'fewer' e 'less'." },
+                { category: 'Erros Comuns', text: "Erro comum: dizer 'I have 30 years'." },
+                { category: 'Erros Comuns', text: "Confusão entre 'its' e 'it's'." },
+                { category: 'Erros Comuns', text: "Por que não dizemos 'explain me', mas sim 'explain to me'." },
+                { category: 'Erros Comuns', text: "Diferença entre 'complement' e 'compliment'." },
+                // Dicas de Estudo
+                { category: 'Dicas de Estudo', text: "Faça um vídeo sobre 'Como melhorar seu listening em 3 passos'." },
+                { category: 'Dicas de Estudo', text: "Crie um post com os 5 melhores aplicativos gratuitos para aprender inglês." },
+                { category: 'Dicas de Estudo', text: "A técnica de 'shadowing' para melhorar a pronúncia." },
+                { category: 'Dicas de Estudo', text: "Como usar o Anki ou flashcards para memorizar vocabulário." },
+                { category: 'Dicas de Estudo', text: "Dica de como pensar em inglês (e parar de traduzir tudo na cabeça)." },
+                { category: 'Dicas de Estudo', text: "Como encontrar parceiros de conversação online (tandem, etc.)." },
+                { category: 'Dicas de Estudo', text: "Por que é importante ter um 'caderno de erros'." },
+                { category: 'Dicas de Estudo', text: "Como usar músicas para aprender gramática e vocabulário." },
+                { category: 'Dicas de Estudo', text: "A importância de consumir conteúdo autêntico em inglês." },
+                { category: 'Dicas de Estudo', text: "Como definir metas de estudo realistas (método SMART)." },
+                { category: 'Dicas de Estudo', text: "3 séries da Netflix ótimas para alunos iniciantes." },
+                { category: 'Dicas de Estudo', text: "Como aproveitar ao máximo suas aulas de conversação." },
+                { category: 'Dicas de Estudo', text: "A técnica 'Pomodoro' aplicada aos estudos de inglês." },
+                { category: 'Dicas de Estudo', text: "Como usar o ChatGPT como uma ferramenta de aprendizado." },
+                { category: 'Dicas de Estudo', text: "Dica para perder o medo de falar inglês." },
+                { category: 'Dicas de Estudo', text: "Como criar um ambiente de imersão em inglês sem sair do Brasil." },
+                { category: 'Dicas de Estudo', text: "A melhor forma de ler livros em inglês (mesmo sendo iniciante)." },
+                { category: 'Dicas de Estudo', text: "Como usar as legendas a seu favor (inglês/português/sem legenda)." },
+                { category: 'Dicas de Estudo', text: "O poder de estudar um pouco todos os dias vs. muito uma vez por semana." },
+                { category: 'Dicas de Estudo', text: "Como usar o YouTube para aprender inglês de graça." },
+                { category: 'Dicas de Estudo', text: "5 canais do YouTube para praticar o seu listening." },
+                { category: 'Dicas de Estudo', text: "Como fazer um plano de estudos de inglês semanal." },
+                { category: 'Dicas de Estudo', text: "A diferença entre estudo ativo e passivo." },
+                { category: 'Dicas de Estudo', text: "Como usar podcasts para melhorar sua compreensão." },
+                { category: 'Dicas de Estudo', text: "Dica para se manter motivado nos estudos de inglês." },
+                { category: 'Dicas de Estudo', text: "Como usar a técnica de 'visualização' para aprender vocabulário." },
+                { category: 'Dicas de Estudo', text: "3 erros que você deve evitar ao estudar inglês." },
+                { category: 'Dicas de Estudo', text: "Como transformar seu celular em uma ferramenta de aprendizado." },
+                { category: 'Dicas de Estudo', text: "A importância de revisar o que você aprendeu." },
+                { category: 'Dicas de Estudo', text: "Como praticar o 'writing' mesmo sem ter ninguém para corrigir." },
+                // Business English
+                { category: 'Business English', text: '5 frases essenciais para iniciar um e-mail profissional em inglês.' },
+                { category: 'Business English', text: 'Como participar de uma reunião em inglês: vocabulário chave.' },
+                { category: 'Business English', text: 'Expressões para negociar em inglês.' },
+                { category: 'Business English', text: 'Como fazer uma apresentação em inglês: dicas e frases úteis.' },
+                { category: 'Business English', text: 'Vocabulário para falar sobre gráficos e tendências (increase, decrease, etc.).' },
+                { category: 'Business English', text: 'Diferença entre "meeting", "appointment" e "commitment".' },
+                { category: 'Business English', text: 'Como encerrar um e-mail profissional de forma adequada.' },
+                { category: 'Business English', text: 'Lidando com "small talk" no ambiente de trabalho.' },
+                { category: 'Business English', text: 'Como dar e receber feedback em inglês.' },
+                { category: 'Business English', text: 'Vocabulário de Marketing Digital em inglês.' },
+                { category: 'Business English', text: 'Frases para pedir esclarecimentos em uma reunião.' },
+                { category: 'Business English', text: 'Como se preparar para uma entrevista de emprego em inglês.' },
+                { category: 'Business English', text: 'Jargões e acrônimos comuns do mundo corporativo (ASAP, FYI, etc.).' },
+                { category: 'Business English', text: 'Como falar sobre suas metas e objetivos profissionais.' },
+                { category: 'Business English', text: 'Vocabulário de RH e recrutamento.' },
+                // Viagens
+                { category: 'Viagens', text: 'Frases essenciais para passar pela imigração no aeroporto.' },
+                { category: 'Viagens', text: 'Como pedir informações na rua em inglês.' },
+                { category: 'Viagens', text: 'Vocabulário para usar em um hotel (check-in, check-out, room service).' },
+                { category: 'Viagens', text: 'Como pedir comida em um restaurante, incluindo restrições alimentares.' },
+                { category: 'Viagens', text: '5 phrasal verbs que você precisa saber antes de viajar.' },
+                { category: 'Viagens', text: 'Como usar o transporte público em uma cidade estrangeira.' },
+                { category: 'Viagens', text: 'O que dizer se você se perder ou precisar de ajuda.' },
+                { category: 'Viagens', text: 'Vocabulário para fazer compras e pechinchar (em lugares onde é aceitável).' },
+                { category: 'Viagens', text: 'Como alugar um carro em inglês.' },
+                { category: 'Viagens', text: 'Frases para lidar com problemas no hotel (ex: ar condicionado quebrado).' },
+                { category: 'Viagens', text: 'Diferenças culturais que você deve conhecer antes de viajar para os EUA/Reino Unido.' },
+                { category: 'Viagens', text: 'Como entender os anúncios sonoros em aeroportos e estações.' },
+                { category: 'Viagens', text: "Vocabulário de 'sightseeing' (pontos turísticos)." },
+                { category: 'Viagens', text: 'Frases para usar em uma farmácia no exterior.' },
+                { category: 'Viagens', text: 'Como explicar que você é brasileiro e fala português.' },
+                // Música e Filmes
+                { category: 'Música e Filmes', text: 'Analise um trecho da letra de uma música famosa e explique a gramática.' },
+                { category: 'Música e Filmes', text: "Explique gírias e expressões de uma cena de 'Friends'." },
+                { category: 'Música e Filmes', text: "Use uma citação de filme para ensinar um 'modal verb'." },
+                { category: 'Música e Filmes', text: 'Recomende 3 filmes para treinar o sotaque britânico.' },
+                { category: 'Música e Filmes', text: 'Como as músicas podem ajudar a memorizar preposições.' },
+                { category: 'Música e Filmes', text: 'Desafio: adivinhe a música pelo trecho da letra traduzida.' },
+                { category: 'Música e Filmes', text: 'Analise a pronúncia de um cantor famoso.' },
+                { category: 'Música e Filmes', text: "Use a sinopse de um filme para praticar o 'Simple Past'." },
+                { category: 'Música e Filmes', text: "Explique um 'phrasal verb' que aparece no título de uma música." },
+                { category: 'Música e Filmes', text: 'Recomende 3 documentários da Netflix para aprender vocabulário específico.' },
+                { category: 'Música e Filmes', text: "Analise uma cena de 'The Office' e explique as piadas culturais." },
+                { category: 'Música e Filmes', text: "Como usar o site 'LyricsTraining' para praticar listening." },
+                { category: 'Música e Filmes', text: 'Explique o vocabulário de um gênero musical (Hip Hop, Rock, etc.).' },
+                { category: 'Música e Filmes', text: "Faça um quiz 'Quem disse isso?' com citações de personagens famosos." },
+                { category: 'Música e Filmes', text: 'Use uma trilha sonora de filme para falar sobre sentimentos e emoções.' }
+            ];
+            
+            // Variáveis de estado
+            let lastIdeaIndex = -1;
+            let activeCategory = 'Todas';
+
+            // --- INICIALIZAÇÃO ---
+            const categories = ['Todas', ...new Set(ideaBank.map(item => item.category))];
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.textContent = category;
+                btn.dataset.category = category;
+                btn.className = 'filter-btn px-4 py-2 text-sm font-medium border-2 border-gray-300 rounded-full transition-all hover:border-yellow-400 hover:shadow-md';
+                if (category === 'Todas') {
+                    btn.classList.add('active');
+                }
+                filtersContainer.appendChild(btn);
+            });
+
+            // --- FUNÇÕES ---
+            const playSoundAndAnimate = () => {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.error("Não foi possível tocar o som.", e));
+                ideaBox.classList.add('pulsate');
+                ideaText.style.opacity = '0';
+                setTimeout(() => ideaBox.classList.remove('pulsate'), 500);
+            };
+
+            const updateIdeaText = (text) => {
+                setTimeout(() => {
+                    ideaText.textContent = text;
+                    ideaText.style.opacity = '1';
+                    copyButton.style.opacity = '1';
+                    copyButton.style.pointerEvents = 'auto';
+                    aiSection.classList.remove('hidden');
+                    aiResultWrapper.classList.add('hidden'); // Esconde o wrapper
+                    aiResultText.innerHTML = ''; // Limpa o conteúdo HTML
+                }, 150);
+            };
+
+            const generateNewIdea = () => {
+                playSoundAndAnimate();
+                const filteredBank = activeCategory === 'Todas' ? ideaBank : ideaBank.filter(idea => idea.category === activeCategory);
+                if (filteredBank.length === 0) {
+                    updateIdeaText(`Nenhuma ideia encontrada para a categoria "${activeCategory}".`);
+                    return;
+                }
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * filteredBank.length);
+                } while (filteredBank.length > 1 && newIndex === lastIdeaIndex);
+                lastIdeaIndex = newIndex;
+                const newIdea = filteredBank[newIndex].text;
+                updateIdeaText(newIdea);
+            };
+
+            const copyToClipboard = () => {
+                // Copia o texto (sem formatação HTML) para a área de transferência
+                const textToCopy = aiResultText.innerText || ideaText.textContent;
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyFeedback.style.opacity = '1';
+                    setTimeout(() => copyFeedback.style.opacity = '0', 2000);
+                } catch (err) {
+                    console.error('Falha ao copiar texto: ', err);
+                    alert('Não foi possível copiar a ideia. Tente manualmente.');
+                }
+                document.body.removeChild(tempTextArea);
+            };
+            
+            const handleFilterClick = (e) => {
+                if (e.target.tagName !== 'BUTTON') return;
+                const clickedCategory = e.target.dataset.category;
+                if (activeCategory === clickedCategory) return;
+                activeCategory = clickedCategory;
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                generateNewIdea();
+            };
+            
+            // --- NOVA FUNÇÃO PARA CONVERTER MARKDOWN BÁSICO EM HTML ---
+            const markdownToHtml = (text) => {
+                return text
+                    // Converte **negrito** para <strong>negrito</strong>
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    // Converte *itálico* para <em>itálico</em>
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    // Converte quebras de linha em <br>
+                    .replace(/\n/g, '<br>');
+            };
+
+            // --- FUNÇÃO DE IA ESPECIALIZADA ATUALIZADA ---
+            const enhanceWithAI = async () => {
+                const currentIdea = ideaText.textContent;
+                if (!currentIdea || currentIdea.startsWith('A sua próxima')) return;
+                
+                aiResultWrapper.classList.remove('hidden');
+                aiResultBox.classList.remove('hidden');
+                aiLoadingSpinner.classList.remove('hidden');
+                aiResultText.classList.add('hidden');
+                enhanceButton.disabled = true;
+                enhanceButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+                // MUDANÇA: Instrução de saudação adicionada ao prompt.
+                const prompt = `
+                Você é a "IA do SLAP", uma especialista em ajudar professores de inglês a transformar ideias em conteúdo de vídeo para redes sociais que seja educativo e engajante. Sua resposta deve ser sempre direcionada a um professor, usando uma linguagem que o capacite e o inspire. Sempre comece sua resposta com o cumprimento "Olá, teacher!".
+
+                Para a ideia de conteúdo abaixo, crie um plano de ação detalhado. A sua resposta DEVE seguir esta estrutura:
+
+                **Formato Ideal:** [Sugira o melhor formato: Reels, Carrossel, Stories, etc., e justifique o porquê em uma frase]
+                **Título Magnético (Hook):** [Sugira 2 ou 3 opções de títulos curtos e que capturem a atenção]
+                **Roteiro Rápido (Estrutura):** [Divida em 3 a 4 passos simples. Ex: Cena 1: problema; Cena 2: solução; Cena 3: exemplo; CTA]
+                **Dica Pedagógica:** [Explique como essa postagem ajuda o aluno. Ex: "Isso solidifica o entendimento do Present Perfect em um contexto real, facilitando a memorização."]
+                **Call to Action (CTA):** [Sugira uma chamada para ação que gere engajamento. Ex: "Comente com uma frase usando a dica que você aprendeu!"]
+
+                ---
+                **Ideia Original do Professor:** "${currentIdea}"
+                ---
+
+                **Plano de Ação Detalhado:**
+                `;
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }]
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Error: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    const aiResponseText = result.candidates[0].content.parts[0].text;
+                    
+                    const htmlContent = markdownToHtml(aiResponseText);
+                    aiResultText.innerHTML = htmlContent;
+
+                } catch (error) {
+                    console.error("Erro ao chamar a API da IA:", error);
+                    aiResultText.innerText = "Desculpe, não foi possível contatar a IA no momento. Tente novamente mais tarde.";
+                } finally {
+                    aiLoadingSpinner.classList.add('hidden');
+                    aiResultText.classList.remove('hidden');
+                    enhanceButton.disabled = false;
+                    enhanceButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            };
+
+
+            // --- EVENT LISTENERS ---
+            generateButton.addEventListener('click', generateNewIdea);
+            copyButton.addEventListener('click', copyToClipboard);
+            filtersContainer.addEventListener('click', handleFilterClick);
+            enhanceButton.addEventListener('click', enhanceWithAI);
+        });
+    </script>
+</body>
+</html>
